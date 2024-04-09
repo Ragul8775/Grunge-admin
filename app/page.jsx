@@ -4,7 +4,7 @@ import Layout from "@/components/Layout";
 import { useSession } from "next-auth/react";
 export default function Home() {
   const {data : session} = useSession()
-  console.log({session})
+  
 return <Layout>
 <div className="flex gap-1">
   <h1>Hello ,</h1>

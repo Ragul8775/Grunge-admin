@@ -1,20 +1,14 @@
 'use client'
 import Image from "next/image";
-import {useSession, signIn, getProviders} from 'next-auth/react'
+import {useSession, signIn, } from 'next-auth/react'
 import Nav from "@/components/Nav";
-import { useEffect, useState } from "react";
+
 export default function Layout({children}) {
     const { data: session } = useSession();
 
-    const [providers, setProviders] = useState(null);
+
     
-    useEffect(() => {
-      const setUpProviders = async () => {
-        const response = await getProviders();
-        setProviders(response);
-      };
-      setUpProviders();
-    }, []);
+ 
   if(!session){
     return (
       <div className="pattern-1 w-screen h-screen flex items-center justify-center">

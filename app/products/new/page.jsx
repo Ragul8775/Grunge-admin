@@ -1,56 +1,47 @@
 'use client'
 import Layout from '@/components/Layout'
-
+import { useRouter } from "next/navigation";
 import React, { useState } from 'react'
 import axios  from 'axios'
+import ProductForm from '@/components/ProductForm';
 const  NewProduct = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-
+  const [product, setProduct]=useState({
+    title:"",
+    description:"",
+    price:""
+  })
+  const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
   const createProduct = async(e)=>{
     e.preventDefault()
-    const data = {title,description,price}
-    await axios.post('/api/products',data);
+    setSubmitting(true);
+     
+     if (!product.title || !product.description || !product.price) {
+      console.error('Title, description, and price are required');
+      return;
+    }
+    try {
+    const data = product
+  
+    axios.post('/api/products', data,{
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(router.push("/products"))
+  } catch (error) {
+    console.error('Error creating product:', error);
+  }finally{
+    setSubmitting(false)
+  }
   }
   return (
     <Layout>
-    <form onSubmit={createProduct}>
-    <div className='flex flex-col gap-4'>
-        <h1 className=' font-oswald font-semibold tracking-wider '>New Product</h1>
-       <div className='flex flex-col gap-1'>
-       <label>Product Name</label>
-        <input
-        type='text'
-        placeholder='product name '
-        value={title}
-        onChange={(ev)=>setTitle(ev.target.value)}/>
-        
-       </div >
-        <div className='flex flex-col gap-1'>
-            <label >Description</label>
-        <textarea 
-        placeholder='descption'
-        value={description}
-        onChange={(ev)=>setDescription(ev.target.value)}>
-
-        </textarea>
-        </div>
-        <div className='flex flex-col gap-1'>
-        <label >Price in (₹)</label>
-        <input
-        type='text'
-        placeholder='price'
-        value={price}
-        onChange={(ev)=>setPrice(ev.target.value)}/>
-        
-        </div>
-
-        <button 
-        type='submit'
-        className='btn-primary font-grunge'>Save</button>
-        </div>
-    </form>
+    <ProductForm
+    type="New"
+    product={product}
+    setProduct={setProduct}
+    submitting={submitting}
+    handleSubmit={createProduct}/>
     </Layout>
   )
 }

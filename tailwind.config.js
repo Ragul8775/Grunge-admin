@@ -20,7 +20,8 @@ module.exports = {
       },
       colors:{
         brown:"#1a120b",
-        cream:"#e5e5cb"
+        cream:"#F1F0E7",
+        light:"#513822"
       }
     },
   },
