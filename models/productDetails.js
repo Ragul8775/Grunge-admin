@@ -11,7 +11,11 @@ const productDetails = new Schema({
     price:{
         type: Number,
         requuired: true
+    },
+    images:{
+        type:[String]
     }
+
 })
 
 const ProductDetails = models.ProductDetails || model("ProductDetails", productDetails)

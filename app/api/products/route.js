@@ -6,22 +6,15 @@ export const POST = async (req)=>{
         
         await mongooseConnect();
 
-        const { title,  description, price } = await req.json();
+        const { title,  description, price, images } = await req.json();
        
-        if (!title || !description || !price) {
-            return new Response(JSON.stringify("Title,Description and Price are Required"),{
-                status:400
-            })
-            
-        }
-
-        try {
-           
-          
+      try {
+                     
             const productDoc = await ProductDetails.create({ 
                 title, 
                 description, 
-                price 
+                price ,
+                images
             });
             
             return new Response(JSON.stringify(productDoc), { status: 201 });

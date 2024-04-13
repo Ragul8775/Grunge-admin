@@ -1,5 +1,6 @@
-import ProductDetails from "@/models/productDetails";
+
 import { mongooseConnect } from "@/lib/mongoose";
+import ProductDetails from "@/models/productDetails";
 export const GET = async (req,{params})=>{
         
     await mongooseConnect();
@@ -7,6 +8,7 @@ export const GET = async (req,{params})=>{
             const product = await ProductDetails.findOne({
                 _id: params.id,
               })
+              console.log(product)
           
               return new Response(JSON.stringify(product), { status: 200 });
         } catch (error) {
@@ -21,7 +23,11 @@ export const GET = async (req,{params})=>{
 }
 export const PATCH = async (request, { params }) => {
     try {
-    const { title,description,price } = await request.json();
+    const { title,description,price,images } = await request.json();
+    console.log({
+      "Tile":title,
+      "Images":images
+    })
         await mongooseConnect()
       const existingProduct = await ProductDetails.findById(params.id);
       if (!existingProduct) {
@@ -30,6 +36,7 @@ export const PATCH = async (request, { params }) => {
       existingProduct.title = title;
       existingProduct.description = description;
       existingProduct.price = price;
+      existingProduct.images = images;
       await existingProduct.save();
       console.log("Product updated:", existingProduct);
       return new Response(JSON.stringify(existingProduct), { status: 200 });
@@ -45,7 +52,7 @@ export const PATCH = async (request, { params }) => {
     try {
       await mongooseConnect()
       await ProductDetails.findByIdAndDelete(params.id);
-      console.log(params.id);
+   
   
       return new Response("Product Deleted successFully", { status: 200 });
     } catch (error) {
