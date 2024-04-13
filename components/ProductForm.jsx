@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Loading from "./Loading";
 import { ReactSortable } from "react-sortablejs";
@@ -11,9 +11,9 @@ const ProductForm = ({
   submitting,
   handleSubmit,
 }) => {
-  console.log(product.images);
   console.log("Children:", product);
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
   const uploadImage = async (ev) => {
     const files = ev.target?.files;
     if (files?.length > 0) {
@@ -24,8 +24,6 @@ const ProductForm = ({
       setIsLoading(true);
       try {
         const response = await axios.post("/api/uploads", data);
-        // Assuming response.data.links contains the new image URLs
-        console.log(response.data);
 
         // Update the product images by adding new images to the existing ones
         setProduct((prevProduct) => {
@@ -39,6 +37,11 @@ const ProductForm = ({
       }
     }
   };
+  useEffect(() => {
+    axios.get("/api/categories").then((response) => {
+      setCategories(response.data);
+    });
+  }, []);
   const updateImagesOrder = (newOrder) => {
     setProduct((prevProduct) => ({
       ...prevProduct,
@@ -50,8 +53,8 @@ const ProductForm = ({
   }
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-4">
-        <h1 className=" font-oswald font-semibold tracking-wider ">
+      <div className="flex flex-col max-w-md sm:max-w-full gap-4">
+        <h1 className=" font-oswald font-semibold tracking-wider text-2xl">
           {type} Product
         </h1>
         <div className="flex flex-col gap-1">
@@ -64,6 +67,24 @@ const ProductForm = ({
               setProduct({ ...product, title: ev.target.value })
             }
           />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label>Categories</label>
+          <select
+            value={product.category}
+            onChange={(ev) =>
+              setProduct({ ...product, category: ev.target.value })
+            }
+          >
+            <option value="">UnCategorised</option>
+            {categories.length > 0 &&
+              categories.map((c) => (
+                <option value={c._id} key={c._id}>
+                  {c.name}
+                  {c.parent?.name ? `/${c.parent?.name}` : null}
+                </option>
+              ))}
+          </select>
         </div>
         <div className="flex flex-col gap-1">
           <label>Description</label>
@@ -108,13 +129,13 @@ const ProductForm = ({
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="w-6 h-6"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
                       />
                     </svg>
@@ -141,14 +162,78 @@ const ProductForm = ({
             }
           />
         </div>
+        <div className="flex flex-col gap-1">
+          <label>MRP(₹)</label>
+          <input
+            type="text"
+            placeholder="price"
+            value={product.mrp}
+            onChange={(ev) => setProduct({ ...product, mrp: ev.target.value })}
+          />
+        </div>
+        <div className="flex flex-col gap-1 justify-center ">
+          <label>Sizes and Quantities</label>
+          {product.sizes?.map((size, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder={`Size Label (e.g., S, M, L)`}
+                value={size.sizeLabel}
+                onChange={(e) => {
+                  const newSizes = [...product.sizes];
+                  newSizes[index].sizeLabel = e.target.value;
+                  setProduct((prev) => ({ ...prev, sizes: newSizes }));
+                }}
+              />
+              <input
+                type="number"
+                placeholder="Quantity"
+                value={size.quantity}
+                onChange={(e) => {
+                  const newSizes = [...product.sizes];
+                  newSizes[index].quantity = e.target.valueAsNumber;
+                  setProduct((prev) => ({ ...prev, sizes: newSizes }));
+                }}
+              />
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  const newSizes = [...product.sizes];
+                  newSizes.splice(index, 1);
+                  setProduct((prev) => ({ ...prev, sizes: newSizes }));
+                }}
+                className="btn-red"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setProduct((prev) => ({
+                ...prev,
+                sizes: Array.isArray(prev.sizes)
+                  ? [...prev.sizes, { sizeLabel: "", quantity: 0 }]
+                  : [{ sizeLabel: "", quantity: 0 }],
+              }));
+            }}
+            className="btn-primary max-w-sm"
+          >
+            Add Size
+          </button>
+        </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="btn-primary font-grunge"
-        >
-          Save
-        </button>
+        <div>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="font-grunge w-28 btn-primary "
+          >
+            Save
+          </button>
+        </div>
       </div>
     </form>
   );

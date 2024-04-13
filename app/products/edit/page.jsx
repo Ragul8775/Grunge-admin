@@ -14,7 +14,16 @@ const EditProduct = () => {
     title: "",
     description: "",
     price: "",
+    mrp: "",
+    images: [],
+    category: "",
+    sizes: [
+      { sizeLabel: "S", quantity: 0 },
+      { sizeLabel: "M", quantity: 0 },
+      { sizeLabel: "L", quantity: 0 },
+    ],
   });
+
   const router = useRouter();
   useEffect(() => {
     axios.get(`/api/products/${promptId}`).then((response) => {
@@ -23,7 +32,10 @@ const EditProduct = () => {
         title: data.title,
         description: data.description,
         price: data.price,
+        mrp: data.mrp,
         images: data.images,
+        category: data.category,
+        sizes: data.sizes,
       });
     });
   }, [promptId]);

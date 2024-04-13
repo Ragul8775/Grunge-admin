@@ -1,4 +1,4 @@
-import {Schema,model,models} from "mongoose";
+import mongoose, {Schema,model,models} from "mongoose";
 
 const productDetails = new Schema({
     title:{
@@ -12,9 +12,20 @@ const productDetails = new Schema({
         type: Number,
         requuired: true
     },
+    mrp:{
+        type: Number,
+        requuired: true
+    },
     images:{
         type:[String]
-    }
+    },
+    category:{
+        type:mongoose.Types.ObjectId,
+        ref:"Category"
+    },sizes: [{
+        sizeLabel: { type: String, required: true },
+        quantity: { type: Number, required: true }
+    }]
 
 })
 

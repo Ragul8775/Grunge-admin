@@ -8,7 +8,7 @@ export const GET = async (req,{params})=>{
             const product = await ProductDetails.findOne({
                 _id: params.id,
               })
-              console.log(product)
+     
           
               return new Response(JSON.stringify(product), { status: 200 });
         } catch (error) {
@@ -23,7 +23,7 @@ export const GET = async (req,{params})=>{
 }
 export const PATCH = async (request, { params }) => {
     try {
-    const { title,description,price,images } = await request.json();
+    const { title,description,price,images ,category,sizes,mrp} = await request.json();
     console.log({
       "Tile":title,
       "Images":images
@@ -36,7 +36,10 @@ export const PATCH = async (request, { params }) => {
       existingProduct.title = title;
       existingProduct.description = description;
       existingProduct.price = price;
+      existingProduct.mrp = mrp;
       existingProduct.images = images;
+      existingProduct.category = category;
+      existingProduct.sizes = sizes;
       await existingProduct.save();
       console.log("Product updated:", existingProduct);
       return new Response(JSON.stringify(existingProduct), { status: 200 });

@@ -44,18 +44,28 @@
  }
 
  .btn-primary{
-  @apply bg-brown text-cream px-3 py-2  text-xl w-32 rounded-md
+  @apply bg-brown text-cream px-4 py-1  shadow-sm rounded-lg;
  }
  table.basic{
-  @apply w-full ;
+  @apply w-full rounded-sm shadow-md ;
  }
- table.basic thead tr td{
-  @apply bg-light text-cream;
+ table.basic thead tr td,
+ table.basic thead tr th{
+  @apply bg-light text-cream text-sm uppercase px-4 py-2;
  }
  table.basic tr td{
     @apply border border-brown p-1;
   }
   table.basic a{
-    @apply bg-light text-cream p-1 rounded-md px-2 mr-2 inline-flex gap-1 items-center  hover:text-slate-300 ;
+    @apply bg-light text-cream p-1 rounded-sm px-2 mr-2 inline-flex gap-1 items-center text-sm  hover:text-slate-300 ;
   }
+  .btn-default, .btn-red{
+    @apply px-4 py-1 rounded-md;
+}
+.btn-red{
+  @apply bg-red-200 text-red-600 px-4 py-1 rounded-sm shadow-sm;
+}
+.btn-default{
+  @apply bg-white text-gray-800 px-4 py-1 rounded-sm border border-gray-200 shadow-sm;
+}
 }
