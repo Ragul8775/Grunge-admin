@@ -76,15 +76,18 @@ const Orders = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     {order.amount}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {order.products
-                      .map((product) => `${product.title} (${product.size})`)
-                      .join(", ")}
+                  <td className="px-6 py-4 whitespace-pre-wrap">
+                    {order.products.map((product, index) => (
+                      <p key={index} className="text-sm">
+                        {`${product.title} (${product.size})`}
+                      </p>
+                    ))}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {order.products
-                      .map((product) => `${product.quantity} `)
-                      .join(", ")}
+                    {order.products.reduce(
+                      (total, product) => total + product.quantity,
+                      0
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {JSON.parse(order.address).addressLine1},{" "}

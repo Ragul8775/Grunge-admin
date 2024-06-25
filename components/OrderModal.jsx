@@ -57,7 +57,7 @@ const OrderModal = ({ isOpen, closeModal, order }) => {
               <ul className="list-disc list-inside">
                 {order.products.map((product) => (
                   <li className="text-sm" key={product.id}>
-                    {`${product.title} (${product.size}) - ${product.price}`}
+                    {`${product.title} (${product.size}) - ${product.price} - (${product.quantity})Q`}
                   </li>
                 ))}
               </ul>
