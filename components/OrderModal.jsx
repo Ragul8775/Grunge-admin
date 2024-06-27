@@ -2,24 +2,39 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const OrderModal = ({ isOpen, closeModal, order, refreshOrders }) => {
+const OrderModal = ({ isOpen, closeModal, order, setRefreshTab }) => {
   const [closeDate, setCloseDate] = useState("");
-
+  const [loading, setLoading] = useState(false);
   if (!isOpen) return null;
 
   const handleCloseOrder = async () => {
     try {
-      /*  await axios.put(`/api/orders/${order._id}`, {
-        orderClosed: true,
-        closeDate,
+      const response = await fetch(`/api/orders/${order._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId: order.orderId,
+          orderClosed: true,
+          closeDate: closeDate,
+        }),
       });
-      refreshOrders(); // This function should refresh the orders list
-      closeModal(); */
+      if (response.ok) {
+        alert("Delivey Mail Sent!!");
+      } else {
+        // Handle non-OK responses
+        console.error("Failed to update the prompt:", response.statusText);
+      }
     } catch (error) {
       console.error("Error closing order:", error);
+    } finally {
+      setLoading(false);
+      closeModal();
+      setRefreshTab(true);
     }
   };
-
+  console.log("Order", order);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-auto overflow-y-auto outline-none focus:outline-none">
       <div className="relative w-auto max-w-4xl mx-auto my-6">
@@ -99,21 +114,26 @@ const OrderModal = ({ isOpen, closeModal, order, refreshOrders }) => {
               <p className="text-sm font-semibold">Razorpay Payment ID:</p>
               <p className="text-sm">{order.razorpay_payment_id}</p>
             </div>
-            <div className="mb-4 flex items-center gap-2">
-              <p className="text-sm font-semibold">Close Date:</p>
-              <input
-                type="date"
-                className="border rounded p-2"
-                value={closeDate}
-                onChange={(e) => setCloseDate(e.target.value)}
-              />
-            </div>
-            <button
-              className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
-              onClick={handleCloseOrder}
-            >
-              Close Order
-            </button>
+            {!order.orderClosed && (
+              <div className="mb-4 flex items-center gap-2">
+                <p className="text-sm font-semibold">Delivery Date:</p>
+                <input
+                  type="date"
+                  className="border rounded p-2"
+                  value={order.orderClosed ? order.deliveryDate : closeDate}
+                  onChange={(e) => setCloseDate(e.target.value)}
+                />
+              </div>
+            )}
+
+            {!order.orderClosed && (
+              <button
+                className="bg-brown text-white font-bold py-2 px-4 rounded"
+                onClick={handleCloseOrder}
+              >
+                Close Order
+              </button>
+            )}
           </div>
         </div>
       </div>

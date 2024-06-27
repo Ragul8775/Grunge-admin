@@ -62,7 +62,10 @@ const orderPaymentSchema = new Schema(
     },
     orderClosed: {
       type: Boolean,
-      default: false, // Default to false for new orders
+      default: false,
+    },
+    deliveryDate: {
+      type: Date,
     },
   },
   {
