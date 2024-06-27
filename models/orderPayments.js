@@ -60,6 +60,10 @@ const orderPaymentSchema = new Schema(
     address: {
       type: String,
     },
+    orderClosed: {
+      type: Boolean,
+      default: false, // Default to false for new orders
+    },
   },
   {
     timestamps: true,
@@ -69,4 +73,5 @@ const orderPaymentSchema = new Schema(
 const OrderPaymentDetails =
   models.OrderPaymentDetails ||
   model("OrderPaymentDetails", orderPaymentSchema);
+
 export default OrderPaymentDetails;

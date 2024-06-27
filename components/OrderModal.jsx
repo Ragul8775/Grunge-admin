@@ -1,9 +1,24 @@
-// OrderModal.js
+"use client";
+import React, { useState } from "react";
+import axios from "axios";
 
-import React from "react";
+const OrderModal = ({ isOpen, closeModal, order, refreshOrders }) => {
+  const [closeDate, setCloseDate] = useState("");
 
-const OrderModal = ({ isOpen, closeModal, order }) => {
   if (!isOpen) return null;
+
+  const handleCloseOrder = async () => {
+    try {
+      /*  await axios.put(`/api/orders/${order._id}`, {
+        orderClosed: true,
+        closeDate,
+      });
+      refreshOrders(); // This function should refresh the orders list
+      closeModal(); */
+    } catch (error) {
+      console.error("Error closing order:", error);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-auto overflow-y-auto outline-none focus:outline-none">
@@ -14,7 +29,7 @@ const OrderModal = ({ isOpen, closeModal, order }) => {
           <div className="flex items-center justify-between p-5 border-b border-solid border-gray-300 rounded-t">
             <h3 className="text-lg font-semibold">{`Order Details - ${order.orderId}`}</h3>
             <button
-              className="p-1 ml-auto bg-transparent border-0 text-black  float-right outline-none focus:outline-none"
+              className="p-1 ml-auto bg-transparent border-0 text-black float-right outline-none focus:outline-none"
               onClick={closeModal}
             >
               <svg
@@ -84,6 +99,21 @@ const OrderModal = ({ isOpen, closeModal, order }) => {
               <p className="text-sm font-semibold">Razorpay Payment ID:</p>
               <p className="text-sm">{order.razorpay_payment_id}</p>
             </div>
+            <div className="mb-4 flex items-center gap-2">
+              <p className="text-sm font-semibold">Close Date:</p>
+              <input
+                type="date"
+                className="border rounded p-2"
+                value={closeDate}
+                onChange={(e) => setCloseDate(e.target.value)}
+              />
+            </div>
+            <button
+              className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+              onClick={handleCloseOrder}
+            >
+              Close Order
+            </button>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
+import OrderPaymentDetails from "@/models/orderPayments";
 import { mongooseConnectUserPayments } from "../../../lib/mongoose";
-import OrderPaymentDetails from "@/models/orderPayment";
 
 export const GET = async (req) => {
   await mongooseConnectUserPayments();
@@ -7,6 +7,7 @@ export const GET = async (req) => {
 
   try {
     const products = await OrderPaymentDetails.find();
+    console.log(products);
 
     return new Response(JSON.stringify(products), { status: 200 });
   } catch (error) {

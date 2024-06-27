@@ -8,6 +8,7 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  console.log("Orders", orders);
   useEffect(() => {
     axios.get("/api/orders").then((response) => {
       setOrders(response.data);
