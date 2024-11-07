@@ -1,13 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
 import Layout from "@/components/Layout";
 import ProductForm from "@/components/ProductForm";
 
-const EditProduct = () => {
-  const [submitting, setSubmitting] = useState(false);
+const EditProductContent = () => {
   const searchParams = useSearchParams();
   const promptId = searchParams.get("id");
   const [product, setProduct] = useState({
@@ -23,40 +21,47 @@ const EditProduct = () => {
       { sizeLabel: "L", quantity: 0 },
     ],
   });
-
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
+
   useEffect(() => {
-    axios.get(`/api/products/${promptId}`).then((response) => {
-      const data = response.data;
-      setProduct({
-        title: data.title,
-        description: data.description,
-        price: data.price,
-        mrp: data.mrp,
-        images: data.images,
-        category: data.category,
-        sizes: data.sizes,
-      });
-    });
+    if (promptId) {
+      axios
+        .get(`/api/products/${promptId}`)
+        .then((response) => {
+          const data = response.data;
+          setProduct({
+            title: data.title,
+            description: data.description,
+            price: data.price,
+            mrp: data.mrp,
+            images: data.images,
+            category: data.category,
+            sizes: data.sizes,
+          });
+        })
+        .catch((error) => console.error("Failed to fetch product:", error));
+    }
   }, [promptId]);
+
   const updateProduct = async (e) => {
     e.preventDefault();
     if (!product.title || !product.description || !product.price) {
       console.error("Title, description, and price are required");
       return;
     }
+    setSubmitting(true);
     try {
-      const data = product;
-      const response = await axios.patch(`/api/products/${promptId}`, data, {
+      const response = await axios.patch(`/api/products/${promptId}`, product, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-      if (response.status !== 200) {
+      if (response.status === 200) {
+        router.push("/products");
+      } else {
         console.error("Error updating product:", response.data);
-        return;
       }
-      router.push("/products");
     } catch (error) {
       console.error("Error updating product:", error.message);
     } finally {
@@ -65,14 +70,22 @@ const EditProduct = () => {
   };
 
   return (
+    <ProductForm
+      type="Edit"
+      product={product}
+      setProduct={setProduct}
+      submitting={submitting}
+      handleSubmit={updateProduct}
+    />
+  );
+};
+
+const EditProduct = () => {
+  return (
     <Layout>
-      <ProductForm
-        type="Edit"
-        product={product}
-        setProduct={setProduct}
-        submitting={submitting}
-        handleSubmit={updateProduct}
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <EditProductContent />
+      </Suspense>
     </Layout>
   );
 };
