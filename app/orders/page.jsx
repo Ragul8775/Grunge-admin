@@ -11,9 +11,14 @@ const Orders = () => {
   const [activeTab, setActiveTab] = useState("new"); // 'new' or 'delivered'
   const [refreshTab, setRefreshTab] = useState(false);
   useEffect(() => {
-    axios.get("/api/orders").then((response) => {
-      setOrders(response.data);
-    });
+    axios
+      .get("/api/orders")
+      .then((response) => {
+        setOrders(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching orders:", error);
+      });
   }, [refreshTab]);
 
   const sortedOrders = orders.sort(
