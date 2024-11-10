@@ -12,15 +12,13 @@ export const authOptions = {
     }),
   ],
   adapter: MongoDBAdapter(clientPromise),
-  callbacks: {
-    session: ({ session, token, user }) => {
-      if (adminEmail.includes(session?.user?.email)) {
-        return session;
-      } else {
-        return false;
-      }
-    },
+ callbacks: {
+  session: ({ session, token, user }) => {
+    session.user.id = user?.id; // Example of adding user ID to session
+    return session;
   },
+},
+
 };
 
 const handler = NextAuth(authOptions);
